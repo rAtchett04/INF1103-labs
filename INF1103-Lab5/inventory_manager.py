@@ -1,41 +1,45 @@
+# inventory_manager.py
 import json
 import os
+from product import Product
 
 FILENAME = "inventory.json"
 
 
 # --- Data Persistence Functions ---
 
-def load_inventory():
+def load_inventory() -> list[Product]:
     """
-    Checks if inventory.json exists and loads the data.
+    Checks if inventory.json exists and loads data as Product instances.
     If not found, starts with initial default inventory.
     """
     if os.path.exists(FILENAME):
         try:
             with open(FILENAME, "r") as file:
-                inventory = json.load(file)
+                raw_data = json.load(file)
+                inventory = [Product.from_dict(item) for item in raw_data]
                 print("inventory.json found.")
                 print("Inventory loaded successfully.\n")
                 return inventory
-        except (json.JSONDecodeError, IOError):
+        except (json.JSONDecodeError, IOError, KeyError):
             print("Error loading inventory file. Starting fresh.\n")
 
-    # Default starting inventory if file is missing/empty
-    default_inventory = [
-        {"id": "P001", "name": "Laptop", "price": 1200.00, "stock": 15, "history": [15]},
-        {"id": "P002", "name": "Mouse", "price": 25.50, "stock": 40, "history": [40]},
-        {"id": "P003", "name": "Keyboard", "price": 45.00, "stock": 25, "history": [25]}
+    # Default starting inventory if file is missing/corrupted
+    return [
+        Product("P001", "Laptop", 1200.00, 15),
+        Product("P002", "Mouse", 25.50, 40),
+        Product("P003", "Keyboard", 45.00, 25)
     ]
-    return default_inventory
 
-def save_inventory(inventory, silent=False):
-    """Saves inventory data to inventory.json."""
+
+def save_inventory(inventory: list[Product], silent=False):
+    """Saves inventory data by converting Product objects back to dictionaries for JSON."""
     if not silent:
         print("Saving inventory...")
     try:
+        data_to_save = [product.to_dict() for product in inventory]
         with open(FILENAME, "w") as file:
-            json.dump(inventory, file, indent=4)
+            json.dump(data_to_save, file, indent=4)
         if not silent:
             print("Inventory saved successfully to inventory.json.")
         else:
@@ -46,23 +50,23 @@ def save_inventory(inventory, silent=False):
 
 # --- Data Manipulation Functions ---
 
-def display_all(inventory):
+def display_all(inventory: list[Product]):
     """Displays current inventory list with formatted rows."""
     print("\nCurrent Inventory")
     print("--------------------------------------------------")
-    for item in inventory:
-        print(f"ID: {item['id']} | Name: {item['name']} | Price: ${item['price']:.2f} | Stock: {item['stock']}")
+    for product in inventory:
+        product.display_row()
     print("--------------------------------------------------")
 
 
-def add_product(inventory):
-    """Adds a new product by taking Product ID, Name, Price, and Stock Quantity."""
+def add_product(inventory: list[Product]):
+    """Adds a new Product instance to the inventory."""
     print("\nAdd New Product")
     product_id = input("Product ID: ").strip()
-    
+
     # Check if ID already exists
-    for item in inventory:
-        if item["id"].upper() == product_id.upper():
+    for product in inventory:
+        if product.id.upper() == product_id.upper():
             print("Product ID already exists!")
             return
 
@@ -71,36 +75,27 @@ def add_product(inventory):
         price = float(input("Price: "))
         stock = int(input("Stock Quantity: "))
 
-        new_product = {
-            "id": product_id,
-            "name": name,
-            "price": price,
-            "stock": stock,
-            "history": [stock]
-        }
+        new_product = Product(product_id, name, price, stock)
         inventory.append(new_product)
         print("\nProduct added successfully!")
     except ValueError:
         print("Invalid input for price or stock quantity.")
 
 
-def update_stock(inventory):
+def update_stock(inventory: list[Product]):
     """Updates the stock quantity of a product searching by Product ID."""
     print("\nUpdate Stock")
     product_id = input("Enter Product ID: ").strip()
 
-    for item in inventory:
-        if item["id"].upper() == product_id.upper():
+    for product in inventory:
+        if product.id.upper() == product_id.upper():
             print("\nProduct Found:")
-            print(f"Name: {item['name']}")
-            print(f"Current Stock: {item['stock']}\n")
-            
+            print(f"Name: {product.name}")
+            print(f"Current Stock: {product.stock}\n")
+
             try:
                 new_stock = int(input("New Stock Quantity: "))
-                # Track transaction diff in history list
-                diff = new_stock - item["stock"]
-                item["history"].append(diff)
-                item["stock"] = new_stock
+                product.update_stock(new_stock)
                 print("\nStock updated successfully!")
             except ValueError:
                 print("Invalid quantity entered.")
@@ -109,23 +104,30 @@ def update_stock(inventory):
     print("Product not found.")
 
 
-def search_product(inventory):
+def search_product(inventory: list[Product]):
     """Searches for a specific product using its Product ID."""
     print("\nSearch Product")
     product_id = input("Enter Product ID: ").strip()
 
-    for item in inventory:
-        if item["id"].upper() == product_id.upper():
+    for product in inventory:
+        if product.id.upper() == product_id.upper():
             print("\nProduct Found")
             print("--------------------------------------------------")
-            print(f"ID: {item['id']}")
-            print(f"Name: {item['name']}")
-            print(f"Price: ${item['price']:.2f}")
-            print(f"Stock: {item['stock']}")
+            product.display_details()
             print("--------------------------------------------------")
             return
 
     print("\nProduct not found.")
+
+
+# --- Helper Guard for Non-Interactive / EOF Environments ---
+
+def get_user_option() -> str:
+    try:
+        return input("Enter option: ").strip()
+    except EOFError:
+        print("\nEOF detected. Exiting program gracefully...")
+        return "6"
 
 
 # --- Main Menu System ---
@@ -147,7 +149,7 @@ def main():
         print("6. Exit")
         print("------------------------\n")
 
-        option = input("Enter option: ").strip()
+        option = get_user_option()
 
         if option == "1":
             display_all(inventory)
@@ -168,8 +170,9 @@ def main():
             break
         else:
             print("Invalid option. Please try again.\n")
-        
-        print()  # Spacer line between commands
+
+        print()
+
 
 if __name__ == "__main__":
     main()
