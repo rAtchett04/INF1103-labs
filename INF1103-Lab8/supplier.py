@@ -10,7 +10,7 @@ class Supplier:
         print(f"Supplier ID: {self.supplier_id} | Name: {self.name} | Email: {self.contact_email}")
 
     def to_dict(self) -> dict:
-        # Converts Supplier instance to dictionary for JSON persistence
+        # Converts Supplier instance to dictionary for JSON persistence.
         return {
             "supplier_id": self.supplier_id,
             "name": self.name,

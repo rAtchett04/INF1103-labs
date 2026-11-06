@@ -1,41 +1,14 @@
+# inventory_manager.py
 from inventory import Inventory
-from product import Product, PhysicalProduct, DigitalProduct
+from product import Product
+from physicalproduct import PhysicalProduct
+from digitalproduct import DigitalProduct
 from supplier import Supplier
 
 
-# Standalone function testing polymorphism and LSP
 def show_product_details(product: Product) -> None:
     product.display_information()
     print(f"Fulfilment Info: {product.get_fulfilment_info()}")
-
-
-def test_polymorphism() -> None:
-    # Test implementation verifying Polymorphism across different Product types.
-    print("==================================================")
-    print("--- 7.2 & 7.3 Testing Polymorphism & LSP ---")
-    print("==================================================")
-
-    sup: Supplier = Supplier("SUP700", "Poly Tech", "support@polytech.com")
-    phys_item: PhysicalProduct = PhysicalProduct("P701", "Mechanical Keyboard", 120.00, 25, weight=1.1, supplier=sup)
-    digi_item: DigitalProduct = DigitalProduct("D701", "Cloud Antivirus", 39.99, 100, download_size=320.0, supplier=sup)
-
-    # Test single show_product_details function
-    print("\n--- 1. Calling show_product_details() on PhysicalProduct ---")
-    show_product_details(phys_item)
-
-    print("\n--- 2. Calling show_product_details() on DigitalProduct ---")
-    show_product_details(digi_item)
-
-    # Add both product types to a single Inventory collection
-    test_inv: Inventory = Inventory("poly_test.json")
-    test_inv.add_product(phys_item)
-    test_inv.add_product(digi_item)
-
-    # Call display_all_fulfilment_details()
-    print("\n--- 3. Executing Unified Polymorphic Loop on Inventory ---")
-    test_inv.display_all_fulfilment_details()
-    print("Polymorphism Test passed successfully!")
-    print("--------------------------------------------------\n")
 
 
 def get_user_option() -> str:
@@ -47,9 +20,6 @@ def get_user_option() -> str:
 
 
 def main() -> None:
-    # Run Polymorphism test 
-    test_polymorphism()
-
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")
     print("==================================================\n")
@@ -89,7 +59,7 @@ def main() -> None:
             try:
                 price: float = float(input("Price: "))
                 stock: int = int(input("Stock Quantity: "))
-                
+
                 sup_id: str = input("Supplier ID: ").strip()
                 sup_name: str = input("Supplier Name: ").strip()
                 sup_email: str = input("Supplier Contact Email: ").strip()

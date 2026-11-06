@@ -1,6 +1,9 @@
+# inventory.py
 import json
 import os
-from product import Product, PhysicalProduct, DigitalProduct
+from product import Product
+from physicalproduct import PhysicalProduct
+from digitalproduct import DigitalProduct
 from supplier import Supplier
 
 
@@ -46,7 +49,6 @@ class Inventory:
             print(f"Error saving inventory: {e}")
 
     def display_all_fulfilment_details(self) -> None:
-        # Single loop calling display_information() and get_fulfilment_info()
         print("\nAll Product Fulfilment Details (Polymorphic Loop)")
         print("--------------------------------------------------")
         for product in self.products:
@@ -83,7 +85,6 @@ class Inventory:
         return None
 
     def find_by_id(self, product_id: str) -> Product | None:
-        # Helper alias pointing to find_product
         return self.find_product(product_id)
 
     def display_all(self) -> None:
@@ -95,7 +96,7 @@ class Inventory:
         print("--------------------------------------------------")
 
     def search_product(self, product_id: str) -> bool:
-        # Searches and prints full product details polymorphically
+        # Searches and prints full product details
         product: Product | None = self.find_product(product_id)
         if product:
             print("\nProduct Found")
