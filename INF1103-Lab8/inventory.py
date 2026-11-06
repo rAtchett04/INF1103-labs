@@ -7,10 +7,11 @@ from supplier import Supplier
 class Inventory:
     def __init__(self, filename: str = "inventory.json"):
         self.filename = filename
+        # Use base class Product type hint for the collection
         self.products: list[Product] = []
 
     def load(self):
-        # Loads inventory from disk using Product.from_dict or sets default stock
+        # Loads inventory from disk using Product.from_dict or sets default stock.
         if os.path.exists(self.filename):
             try:
                 with open(self.filename, "r") as file:
@@ -47,6 +48,39 @@ class Inventory:
         except IOError as e:
             print(f"Error saving inventory: {e}")
 
+    # --- Add, remove, and find product ---
+
+    def add_product(self, product: Product) -> bool:
+        # Adds an existing Product object to the inventory
+        if self.find_product(product.id):
+            print("Product ID already exists in this inventory!")
+            return False
+
+        self.products.append(product)
+        print("\nProduct added successfully!")
+        return True
+
+    def remove_product(self, product_id: str) -> Product | None:
+        # Removes the matching Product reference from the inventory and returns it
+        product = self.find_product(product_id)
+        if product:
+            self.products.remove(product)
+            print(f"\nProduct '{product.name}' (ID: {product.id}) removed from inventory.")
+            return product
+        
+        print("\nProduct not found for removal.")
+        return None
+
+    def find_product(self, product_id: str) -> Product | None:
+        # Returns the matching Product, or None if it cannot be found
+        for product in self.products:
+            if product.id.upper() == product_id.strip().upper():
+                return product
+        return None
+
+    def find_by_id(self, product_id: str) -> Product | None:
+        return self.find_product(product_id)
+
     def display_all(self):
         # Displays formatted list of all items
         print("\nCurrent Inventory")
@@ -55,26 +89,9 @@ class Inventory:
             product.display_row()
         print("--------------------------------------------------")
 
-    def find_by_id(self, product_id: str) -> Product | None:
-        # Helper method to look up a product by ID
-        for product in self.products:
-            if product.id.upper() == product_id.strip().upper():
-                return product
-        return None
-
-    def add_product(self, product: Product) -> bool:
-        # Adds a Product instance if ID does not already exist
-        if self.find_by_id(product.id):
-            print("Product ID already exists!")
-            return False
-
-        self.products.append(product)
-        print("\nProduct added successfully!")
-        return True
-
     def search_product(self, product_id: str) -> bool:
-        # Searches and prints full product details
-        product = self.find_by_id(product_id)
+        # Searches and prints full product details by delegating to product method
+        product = self.find_product(product_id)
         if product:
             print("\nProduct Found")
             print("--------------------------------------------------")

@@ -1,36 +1,45 @@
+# inventory_manager.py
 from inventory import Inventory
 from product import PhysicalProduct, DigitalProduct
 from supplier import Supplier
 
 
-def test_supplier_association():
+def test_aggregation():
+    # Test implementation for aggregation:
     print("==================================================")
-    print("--- 2.2 Testing Supplier-Product Association ---")
+    print("--- 3.2 Testing Aggregation (Inventory & Product) ---")
     print("==================================================")
 
-    # Create a Supplier object
-    test_supplier = Supplier("SUP100", "Acme Supplies", "support@acme.com")
+    # Create a Supplier and standalone Product objects before creating any Inventory
+    supplier = Supplier("SUP200", "Distributor", "sales@iloveSIT.com")
+    item_a = PhysicalProduct("P201", "Prof Jerry's Coffee", 350.00, 10, weight=6.5, supplier=supplier)
+    item_b = DigitalProduct("D201", "INF1103 Software", 199.99, 50, download_size=850.0, supplier=supplier)
 
-    # Create PhysicalProduct and DigitalProduct associated with the Supplier
-    phys_item = PhysicalProduct("P100", "Mechanical Keyboard", 89.99, 20, weight=1.1, supplier=test_supplier)
-    digi_item = DigitalProduct("D100", "Antivirus Key", 29.99, 50, download_size=150.0, supplier=test_supplier)
+    # Create Inventory A and add products
+    inventory_a = Inventory("inventory_a.json")
+    inventory_a.add_product(item_a)
+    inventory_a.add_product(item_b)
 
-    # Display supplier information through each Product
-    print("\n[Physical Product Supplier Info via Product]:")
-    phys_item.display_information()
+    print("\n--- Inventory A Content ---")
+    inventory_a.display_all()
 
-    print("\n[Digital Product Supplier Info via Product]:")
-    digi_item.display_information()
+    # Remove item_a from Inventory A
+    removed_product = inventory_a.remove_product("P201")
 
-    # Predict & Test Independence (del supplier)
-    print("\n--- Testing Independent Existence (Deleting local supplier variable) ---")
-    del test_supplier  # Deletes local variable reference
+    # Verify item_a still exists independently and can call its methods
+    print("\n--- Verifying Product Existence After Removal from Inventory A ---")
+    print(f"Removed Product Name: {removed_product.name}")
+    print(f"Removed Product Price: ${removed_product.price:.2f}")
+    removed_product.display_information()
 
-    # Ensure products still hold reference to Supplier object in memory
-    print("\nAccessing Supplier after local 'del test_supplier':")
-    print(f"Physical Product's Supplier Name: {phys_item.supplier.name}")
-    print(f"Digital Product's Supplier Email: {digi_item.supplier.contact_email}")
-    print("Association test passed successfully!")
+    # Transfer product to Inventory B
+    inventory_b = Inventory("inventory_b.json")
+    print("\n--- Adding Removed Product to Inventory B ---")
+    inventory_b.add_product(removed_product)
+
+    print("\n--- Inventory B Content ---")
+    inventory_b.display_all()
+    print("Aggregation test passed successfully!")
     print("--------------------------------------------------\n")
 
 
@@ -39,12 +48,12 @@ def get_user_option() -> str:
         return input("Enter option: ").strip()
     except EOFError:
         print("\nEOF detected. Exiting program gracefully...")
-        return "6"
+        return "7"
 
 
 def main():
-    # Association test first
-    test_supplier_association()
+    # Aggregation test first
+    test_aggregation()
 
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")
@@ -57,10 +66,11 @@ def main():
         print("--------- MENU ---------")
         print("1. Display All Products")
         print("2. Add Product")
-        print("3. Update Stock")
-        print("4. Search Product")
-        print("5. Save Inventory")
-        print("6. Exit")
+        print("3. Remove Product")
+        print("4. Update Stock")
+        print("5. Search Product")
+        print("6. Save Inventory")
+        print("7. Exit")
         print("------------------------\n")
 
         option = get_user_option()
@@ -103,10 +113,15 @@ def main():
                 print("Invalid numerical input. Product addition canceled.")
 
         elif option == "3":
+            print("\nRemove Product")
+            p_id = input("Enter Product ID to remove: ").strip()
+            inventory.remove_product(p_id)
+
+        elif option == "4":
             print("\nUpdate Stock")
             p_id = input("Enter Product ID: ").strip()
             try:
-                product = inventory.find_by_id(p_id)
+                product = inventory.find_product(p_id)
                 if product:
                     print("\nProduct Found:")
                     print(f"Name: {product.name}")
@@ -119,16 +134,16 @@ def main():
             except ValueError:
                 print("Invalid quantity entered.")
 
-        elif option == "4":
+        elif option == "5":
             print("\nSearch Product")
             p_id = input("Enter Product ID: ").strip()
             inventory.search_product(p_id)
 
-        elif option == "5":
+        elif option == "6":
             print()
             inventory.save()
 
-        elif option == "6":
+        elif option == "7":
             print("\nSaving inventory before exit...")
             inventory.save(silent=True)
             print("\nThank you for using Inventory Management System.")
