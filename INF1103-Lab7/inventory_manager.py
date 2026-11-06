@@ -1,24 +1,31 @@
 from inventory import Inventory
-from product import PhysicalProduct, DigitalProduct
+from product import PhysicalProduct, DigitalProduct, CanBeShipped
 
 
-def test_fulfilment_info():
+def test_can_be_shipped_interface():
     """
-    3.2 Test implementation:
-    Tests get_fulfilment_info() for both PhysicalProduct and DigitalProduct implementations.
+    4.2 Test implementation:
+    Tests calculate_shipping_cost() with physical products of different weights,
+    and verifies interface adherence.
     """
     print("==================================================")
-    print("--- 3.2 Testing get_fulfilment_info() ---")
+    print("--- 4.2 Testing CanBeShipped Interface ---")
     print("==================================================")
 
-    phys_item = PhysicalProduct("P099", "Gaming Laptop", 1500.00, 5, weight=3.2)
-    digi_item = DigitalProduct("D099", "Antivirus Software", 49.99, 100, download_size=250.0)
+    light_item = PhysicalProduct("P010", "Computer Mouse", 20.00, 50, weight=0.2)
+    medium_item = PhysicalProduct("P011", "Mechanical Keyboard", 80.00, 30, weight=1.2)
+    heavy_item = PhysicalProduct("P012", "Desktop Tower", 1200.00, 10, weight=14.5)
+    digital_item = DigitalProduct("D010", "Video Editor", 99.99, 100, download_size=1500.0)
 
-    print(f"\n[Physical Product] {phys_item.name}:")
-    print(f"Fulfilment Output: {phys_item.get_fulfilment_info()}")
+    shippable_items = [light_item, medium_item, heavy_item]
 
-    print(f"\n[Digital Product] {digi_item.name}:")
-    print(f"Fulfilment Output: {digi_item.get_fulfilment_info()}")
+    for item in shippable_items:
+        print(f"\nItem: {item.name} (Weight: {item.weight} kg)")
+        print(f"Is CanBeShipped Instance? {isinstance(item, CanBeShipped)}")
+        print(f"Calculated Shipping Cost: ${item.calculate_shipping_cost():.2f}")
+
+    print(f"\nDigital Item: {digital_item.name}")
+    print(f"Is CanBeShipped Instance? {isinstance(digital_item, CanBeShipped)}")
 
     print("--------------------------------------------------\n")
 
@@ -33,8 +40,8 @@ def get_user_option() -> str:
 
 
 def main():
-    # 3.2 Run test suite first
-    test_fulfilment_info()
+    # Run interface test suite first
+    test_can_be_shipped_interface()
 
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")

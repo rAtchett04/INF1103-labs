@@ -28,5 +28,26 @@
             100
         ],
         "download_size": 12.5
+    },
+    {
+        "id": "P003",
+        "name": "Monitor",
+        "price": 100.0,
+        "stock": 10,
+        "history": [
+            10
+        ],
+        "weight": 4.5
+    },
+    {
+        "id": "Dknek",
+        "name": "LOL",
+        "price": 1.0,
+        "stock": 1,
+        "history": [
+            1,
+            0
+        ],
+        "download_size": 1.0
     }
 ]

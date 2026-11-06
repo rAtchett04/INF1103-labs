@@ -21,7 +21,7 @@ class Inventory:
             except (json.JSONDecodeError, IOError, KeyError):
                 print("Error loading inventory file. Starting fresh.\n")
 
-        # Default starting inventory with physical and digital items
+        # Default starting inventory
         self.products = [
             PhysicalProduct("P001", "Laptop", 1200.00, 15, weight=2.5),
             PhysicalProduct("P002", "Mouse", 25.50, 40, weight=0.1),
