@@ -7,11 +7,11 @@ from supplier import Supplier
 class Inventory:
     def __init__(self, filename: str = "inventory.json"):
         self.filename = filename
-        # Use base class Product type hint for the collection
+        # Store Product objects in a collection with base class type hint
         self.products: list[Product] = []
 
     def load(self):
-        # Loads inventory from disk using Product.from_dict or sets default stock.
+        # Loads inventory from disk
         if os.path.exists(self.filename):
             try:
                 with open(self.filename, "r") as file:
@@ -34,7 +34,7 @@ class Inventory:
         ]
 
     def save(self, silent: bool = False):
-        # Saves current inventory list to JSON preserving type and supplier attributes
+        # Saves current inventory list to JSON
         if not silent:
             print("Saving inventory...")
         try:
@@ -47,8 +47,6 @@ class Inventory:
                 print("Inventory saved successfully.")
         except IOError as e:
             print(f"Error saving inventory: {e}")
-
-    # --- Add, remove, and find product ---
 
     def add_product(self, product: Product) -> bool:
         # Adds an existing Product object to the inventory
@@ -90,7 +88,7 @@ class Inventory:
         print("--------------------------------------------------")
 
     def search_product(self, product_id: str) -> bool:
-        # Searches and prints full product details by delegating to product method
+        # Searches and prints full product details
         product = self.find_product(product_id)
         if product:
             print("\nProduct Found")

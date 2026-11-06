@@ -2,48 +2,62 @@
 from inventory import Inventory
 from product import PhysicalProduct, DigitalProduct
 from supplier import Supplier
+from order import Order, OrderLine
 
 
-def test_aggregation():
-    # Test implementation for aggregation:
+def test_composition():
+    # Test implementation
     print("==================================================")
-    print("--- 3.2 Testing Aggregation (Inventory & Product) ---")
+    print("--- Testing Composition (Order & OrderLine) ---")
     print("==================================================")
 
-    # Create a Supplier and standalone Product objects before creating any Inventory
-    supplier = Supplier("SUP200", "Distributor", "sales@iloveSIT.com")
-    item_a = PhysicalProduct("P201", "Prof Jerry's Coffee", 350.00, 10, weight=6.5, supplier=supplier)
-    item_b = DigitalProduct("D201", "INF1103 Software", 199.99, 50, download_size=850.0, supplier=supplier)
+    # Create a Supplier and Products
+    sup = Supplier("SUP300", "Logitech Direct", "b2b@logitech.com")
+    prod1 = PhysicalProduct("P301", "Prof Jerry's Coffee", 30.00, 100, weight=0.15, supplier=sup)
+    prod2 = PhysicalProduct("P302", "SIT Table", 75.00, 50, weight=0.3, supplier=sup)
+    prod3 = DigitalProduct("D301", "INF1103 Software", 49.99, 200, download_size=50.0, supplier=sup)
 
-    # Create Inventory A and add products
-    inventory_a = Inventory("inventory_a.json")
-    inventory_a.add_product(item_a)
-    inventory_a.add_product(item_b)
+    # Create Order 1 and add multiple products
+    order1 = Order("ORD-1001")
+    order1.add_order_line(prod1, 2) 
+    order1.add_order_line(prod2, 1)  
+    order1.add_order_line(prod3, 3)  
 
-    print("\n--- Inventory A Content ---")
-    inventory_a.display_all()
+    # Display Order 1 summary and calculate total
+    order1.display_order_summary()
 
-    # Remove item_a from Inventory A
-    removed_product = inventory_a.remove_product("P201")
+    # Create Order 2
+    order2 = Order("ORD-1002")
+    order2.add_order_line(prod1, 5)  
 
-    # Verify item_a still exists independently and can call its methods
-    print("\n--- Verifying Product Existence After Removal from Inventory A ---")
-    print(f"Removed Product Name: {removed_product.name}")
-    print(f"Removed Product Price: ${removed_product.price:.2f}")
-    removed_product.display_information()
+    print("--- Comparing OrderLine objects vs Product references across Orders ---")
+    line_from_order1 = order1.order_lines[0]
+    line_from_order2 = order2.order_lines[0]
 
-    # Transfer product to Inventory B
-    inventory_b = Inventory("inventory_b.json")
-    print("\n--- Adding Removed Product to Inventory B ---")
-    inventory_b.add_product(removed_product)
+    # Verification of OrderLine composition independence
+    print(f"Order 1 Line Object ID: {id(line_from_order1)}")
+    print(f"Order 2 Line Object ID: {id(line_from_order2)}")
+    print(f"Are OrderLines the same object? {line_from_order1 is line_from_order2}")
 
-    print("\n--- Inventory B Content ---")
-    inventory_b.display_all()
-    print("Aggregation test passed successfully!")
+    # Verification of shared Product reference
+    print(f"Order 1 Line Product Reference ID: {id(line_from_order1.product)}")
+    print(f"Order 2 Line Product Reference ID: {id(line_from_order2.product)}")
+    print(f"Do both OrderLines reference the exact same Product instance? {line_from_order1.product is line_from_order2.product}")
+
+    # Remove an order line through an Order method
+    print("\n--- Removing Line Item from Order 1 ---")
+    order1.remove_order_line("P302")
+    order1.display_order_summary()
+
+    # Verify Product still exists after Order modification/deletion
+    print("--- Verifying Product Existence After Order Line Removal ---")
+    print(f"Product '{prod2.name}' still exists in system memory (Price: ${prod2.price:.2f}).")
+    print("Composition test passed successfully!")
     print("--------------------------------------------------\n")
 
 
 def get_user_option() -> str:
+    # Helper guard against EOFError in non-interactive environments
     try:
         return input("Enter option: ").strip()
     except EOFError:
@@ -52,8 +66,8 @@ def get_user_option() -> str:
 
 
 def main():
-    # Aggregation test first
-    test_aggregation()
+    # Execute Composition test first
+    test_composition()
 
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")

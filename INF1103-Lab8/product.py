@@ -4,10 +4,11 @@ from supplier import Supplier
 
 # --- CanBeShipped Interface ---
 
-class CanBeShipped(ABC):    
+class CanBeShipped(ABC):
+    # Interface defining a contract for any shippable object.
     @abstractmethod
     def calculate_shipping_cost(self) -> float:
-        # Abstract method to calculate shipping costs
+        # Abstract method to calculate shipping costs.
         pass
 
 
@@ -19,8 +20,7 @@ class Product(ABC):
         self.name = name
         self.price = float(price)
         self.stock = int(stock)
-        # Association with Supplier object using type hint
-        self.supplier: Supplier = supplier  
+        self.supplier: Supplier = supplier  # Association with Supplier object using type hint
         self.history = history if history is not None else [self.stock]
 
     @abstractmethod
@@ -35,7 +35,7 @@ class Product(ABC):
         self.stock = new_stock
 
     def to_dict(self) -> dict:
-        # Converts the Product object into a base dictionary to convert to JSON
+        # Converts the Product object into a base dictionary for JSON serialization
         return {
             "id": self.id,
             "name": self.name,
@@ -47,10 +47,9 @@ class Product(ABC):
 
     @classmethod
     def from_dict(cls, data: dict):
-        # Creates the appropriate Product subclass instance using JSON data 
+        # Creates the appropriate Product subclass instance using JSON data
         product_type = data.get("type", "").lower()
 
-        # Parse nested Supplier dictionary if present
         supplier_data = data.get("supplier")
         supplier_obj = Supplier.from_dict(supplier_data) if isinstance(supplier_data, dict) else Supplier("SUP001", "TechDistro Ltd", "sales@techdistro.com")
 
@@ -108,9 +107,8 @@ class Product(ABC):
 # --- PhysicalProduct Class ---
 
 class PhysicalProduct(Product, CanBeShipped):
-    # Physical product inheriting from Product and implementing CanBeShipped.
+    # Physical product inheriting from Product and implementing CanBeShipped
     def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float, supplier: Supplier, history: list = None):
-        # Pass supplier up to Product constructor via super()
         super().__init__(product_id, name, price, stock, supplier, history)
         self.weight = float(weight)
 
@@ -133,12 +131,12 @@ class PhysicalProduct(Product, CanBeShipped):
         print(f"Fulfilment Info: {self.get_fulfilment_info()}")
 
     def display_row(self):
-        # Overrides display_row to include weight information 
+        # Include weight information
         sup_name = self.supplier.name if self.supplier else "N/A"
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Weight: {self.weight:.2f} kg | Supplier: {sup_name}")
 
     def to_dict(self) -> dict:
-        # Overrides to_dict to include the 'type' identifier and weight attribute
+        # Include the 'type' identifier and weight attribute.
         data = super().to_dict()
         data["type"] = "physical"
         data["weight"] = self.weight
@@ -165,12 +163,12 @@ class DigitalProduct(Product):
         print(f"Fulfilment Info: {self.get_fulfilment_info()}")
 
     def display_row(self):
-        # Overrides display_row to include download size
+        # Include download size
         sup_name = self.supplier.name if self.supplier else "N/A"
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Size: {self.download_size:.2f} MB | Supplier: {sup_name}")
 
     def to_dict(self) -> dict:
-        # Overrides to_dict to include the 'type' identifier and download_size attribute
+        # Include the 'type' identifier and download_size attribute
         data = super().to_dict()
         data["type"] = "digital"
         data["download_size"] = self.download_size
