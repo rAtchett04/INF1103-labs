@@ -1,20 +1,29 @@
+# inventory_manager.py
 from inventory import Inventory
 from product import Product, PhysicalProduct, DigitalProduct
 
 
-def test_classes():
+def test_display_information_overriding():
     """
-    Test section required by 1.2 and 1.3 instructions:
-    Creates PhysicalProduct and DigitalProduct objects and displays their information.
+    2.2 Test implementation:
+    Creates one physical product and one digital product, calling display_information()
+    on each object to verify that both common product information and type-specific details are shown.
     """
-    print("--- Testing PhysicalProduct Class ---")
-    phys_item = PhysicalProduct("P099", "Gaming Console", 499.99, 10, weight=4.2)
-    phys_item.display_information()
+    print("==================================================")
+    print("--- 2.2 Testing display_information() Overriding ---")
+    print("==================================================")
     
-    print("\n--- Testing DigitalProduct Class ---")
-    digi_item = DigitalProduct("D099", "Antivirus Software", 29.99, 50, download_size=250.75)
-    digi_item.display_information()
-    print("-------------------------------------\n")
+    # Create one physical product
+    phys_product = PhysicalProduct("P099", "Gaming Laptop", 1500.00, 5, weight=3.2)
+    print("\n--- Physical Product Information ---")
+    phys_product.display_information()
+
+    # Create one digital product
+    digi_product = DigitalProduct("D099", "Photo Editing Software", 89.99, 100, download_size=450.5)
+    print("\n--- Digital Product Information ---")
+    digi_product.display_information()
+    
+    print("--------------------------------------------------\n")
 
 
 def get_user_option() -> str:
@@ -27,8 +36,7 @@ def get_user_option() -> str:
 
 
 def main():
-    # Execute tests required by instructions before launching the main system
-    test_classes()
+    test_display_information_overriding()
 
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")

@@ -62,6 +62,11 @@ class Product:
         print(f"Price: ${self.price:.2f}")
         print(f"Stock: {self.stock}")
 
+    # Base display_information method to be reused by subclasses
+    def display_information(self):
+        """Displays common product information."""
+        self.display_details()
+
 
 # --- PhysicalProduct Class ---
 
@@ -73,9 +78,10 @@ class PhysicalProduct(Product):
         super().__init__(product_id, name, price, stock, history)
         self.weight = float(weight)
 
+    #Reuse parent implementation using super()
     def display_information(self):
-        """Displays product information alongside its weight."""
-        self.display_details()
+        """Calls super().display_information() then displays the additional weight."""
+        super().display_information()
         print(f"Weight: {self.weight:.2f} kg")
 
     def display_row(self):
@@ -96,15 +102,13 @@ class DigitalProduct(Product):
     Inherits from Product and introduces a download_size attribute in megabytes (MB).
     """
     def __init__(self, product_id: str, name: str, price: float, stock: int, download_size: float, history: list = None):
-        # 9. Reuse the existing Product constructor using super()
         super().__init__(product_id, name, price, stock, history)
-        # 10. Initialize the additional download_size attribute
         self.download_size = float(download_size)
 
-    # 11. Provide its own display_information() method displaying details alongside download size
+    # Reuse parent implementation using super()
     def display_information(self):
-        """Displays product information alongside its download size in MB."""
-        self.display_details()
+        """Calls super().display_information() then displays the additional download size."""
+        super().display_information()
         print(f"Download Size: {self.download_size:.2f} MB")
 
     def display_row(self):

@@ -74,10 +74,7 @@ class Inventory:
         if product:
             print("\nProduct Found")
             print("--------------------------------------------------")
-            if hasattr(product, "display_information"):
-                product.display_information()
-            else:
-                product.display_details()
+            product.display_information()
             print("--------------------------------------------------")
             return True
 
