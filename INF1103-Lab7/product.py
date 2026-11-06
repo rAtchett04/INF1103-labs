@@ -36,7 +36,7 @@ class Product(ABC):
         self.stock = new_stock
 
     def to_dict(self) -> dict:
-        """Converts the Product object into a dictionary for JSON serialization."""
+        """Converts the Product object into a base dictionary for JSON serialization."""
         return {
             "id": self.id,
             "name": self.name,
@@ -47,23 +47,27 @@ class Product(ABC):
 
     @classmethod
     def from_dict(cls, data: dict):
-        """Creates a Product instance from a dictionary based on specific attributes."""
-        if "weight" in data:
+        """
+        Creates the appropriate Product subclass instance using the JSON type identifier.
+        """
+        product_type = data.get("type", "").lower()
+
+        if product_type == "physical" or "weight" in data:
             return PhysicalProduct(
                 product_id=data["id"],
                 name=data["name"],
                 price=data["price"],
                 stock=data["stock"],
-                weight=data["weight"],
+                weight=data.get("weight", 0.0),
                 history=data.get("history", [data["stock"]])
             )
-        elif "download_size" in data:
+        elif product_type == "digital" or "download_size" in data:
             return DigitalProduct(
                 product_id=data["id"],
                 name=data["name"],
                 price=data["price"],
                 stock=data["stock"],
-                download_size=data["download_size"],
+                download_size=data.get("download_size", 0.0),
                 history=data.get("history", [data["stock"]])
             )
         
@@ -77,7 +81,7 @@ class Product(ABC):
         )
 
     def display_row(self):
-        """Prints a single-line summary of the product for the list view."""
+        """Prints a single-line summary of the product for list views."""
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock}")
 
     def display_details(self):
@@ -92,17 +96,16 @@ class Product(ABC):
         self.display_details()
 
 
-# --- PhysicalProduct ---
+# --- PhysicalProduct Class ---
 
 class PhysicalProduct(Product, CanBeShipped):
     """
-    Physical product that inherits common product traits and implements CanBeShipped.
+    Physical product inheriting from Product and implementing CanBeShipped.
     """
     def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float, history: list = None):
         super().__init__(product_id, name, price, stock, history)
         self.weight = float(weight)
 
-    # Implementation of CanBeShipped interface method
     def calculate_shipping_cost(self) -> float:
         """Calculates shipping cost based on product weight ($5.00 base fee + $2.50 per kg)."""
         base_fee = 5.00
@@ -110,12 +113,12 @@ class PhysicalProduct(Product, CanBeShipped):
         return base_fee + (self.weight * rate_per_kg)
 
     def get_fulfilment_info(self) -> str:
-        """Returns a message explaining physical shipping requirements and cost."""
+        """Returns a message explaining physical shipping requirements."""
         shipping_cost = self.calculate_shipping_cost()
         return f"Physical shipping required (Weight: {self.weight:.2f} kg, Shipping Cost: ${shipping_cost:.2f})."
 
     def display_information(self):
-        """Displays parent details along with weight and calculated shipping cost."""
+        """Displays parent details along with weight, shipping cost, and fulfilment info."""
         super().display_information()
         print(f"Weight: {self.weight:.2f} kg")
         print(f"Shipping Cost: ${self.calculate_shipping_cost():.2f}")
@@ -126,17 +129,18 @@ class PhysicalProduct(Product, CanBeShipped):
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Weight: {self.weight:.2f} kg")
 
     def to_dict(self) -> dict:
-        """Overrides to_dict to include the weight attribute."""
+        """Overrides to_dict to include the 'type' identifier and weight attribute."""
         data = super().to_dict()
+        data["type"] = "physical"
         data["weight"] = self.weight
         return data
 
 
-# --- DigitalProduct ---
+# --- DigitalProduct Class ---
 
 class DigitalProduct(Product):
     """
-    Digital product inheriting from Product. Does NOT implement CanBeShipped.
+    Digital product inheriting from Product
     """
     def __init__(self, product_id: str, name: str, price: float, stock: int, download_size: float, history: list = None):
         super().__init__(product_id, name, price, stock, history)
@@ -147,7 +151,7 @@ class DigitalProduct(Product):
         return f"Delivered digitally via email/download link. Size: {self.download_size:.2f} MB."
 
     def display_information(self):
-        """Displays parent details along with download size."""
+        """Displays parent details along with download size and fulfilment info."""
         super().display_information()
         print(f"Download Size: {self.download_size:.2f} MB")
         print(f"Fulfilment Info: {self.get_fulfilment_info()}")
@@ -157,7 +161,8 @@ class DigitalProduct(Product):
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Size: {self.download_size:.2f} MB")
 
     def to_dict(self) -> dict:
-        """Overrides to_dict to include the download_size attribute."""
+        """Overrides to_dict to include the 'type' identifier and download_size attribute."""
         data = super().to_dict()
+        data["type"] = "digital"
         data["download_size"] = self.download_size
         return data

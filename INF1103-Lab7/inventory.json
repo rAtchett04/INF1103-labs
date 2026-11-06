@@ -7,6 +7,7 @@
         "history": [
             15
         ],
+        "type": "physical",
         "weight": 2.5
     },
     {
@@ -17,6 +18,7 @@
         "history": [
             40
         ],
+        "type": "physical",
         "weight": 0.1
     },
     {
@@ -27,6 +29,7 @@
         "history": [
             100
         ],
+        "type": "digital",
         "download_size": 12.5
     },
     {
@@ -37,6 +40,7 @@
         "history": [
             10
         ],
+        "type": "physical",
         "weight": 4.5
     },
     {
@@ -48,6 +52,18 @@
             1,
             0
         ],
+        "type": "digital",
         "download_size": 1.0
+    },
+    {
+        "id": "D002",
+        "name": "Software Program",
+        "price": 100.0,
+        "stock": 10,
+        "history": [
+            10
+        ],
+        "type": "digital",
+        "download_size": 100.0
     }
 ]

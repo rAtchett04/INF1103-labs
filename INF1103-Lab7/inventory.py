@@ -9,7 +9,7 @@ class Inventory:
         self.products: list[Product] = []
 
     def load(self):
-        """Loads inventory from disk or initializes default products if missing."""
+        """Loads inventory from disk using Product.from_dict or sets default stock."""
         if os.path.exists(self.filename):
             try:
                 with open(self.filename, "r") as file:
@@ -21,7 +21,7 @@ class Inventory:
             except (json.JSONDecodeError, IOError, KeyError):
                 print("Error loading inventory file. Starting fresh.\n")
 
-        # Default starting inventory
+        # Default starting inventory with physical and digital items
         self.products = [
             PhysicalProduct("P001", "Laptop", 1200.00, 15, weight=2.5),
             PhysicalProduct("P002", "Mouse", 25.50, 40, weight=0.1),
@@ -29,7 +29,7 @@ class Inventory:
         ]
 
     def save(self, silent: bool = False):
-        """Saves current inventory list to JSON."""
+        """Saves current inventory list to JSON preserving type attributes."""
         if not silent:
             print("Saving inventory...")
         try:
@@ -44,7 +44,7 @@ class Inventory:
             print(f"Error saving inventory: {e}")
 
     def display_all(self):
-        """Displays formatted list of all items."""
+        """Displays formatted list of all items by invoking their display_row() method."""
         print("\nCurrent Inventory")
         print("--------------------------------------------------")
         for product in self.products:
@@ -69,7 +69,7 @@ class Inventory:
         return True
 
     def search_product(self, product_id: str) -> bool:
-        """Searches and prints full product details."""
+        """Searches and prints full product details by delegating to display_information()."""
         product = self.find_by_id(product_id)
         if product:
             print("\nProduct Found")

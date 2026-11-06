@@ -1,33 +1,5 @@
 from inventory import Inventory
-from product import PhysicalProduct, DigitalProduct, CanBeShipped
-
-
-def test_can_be_shipped_interface():
-    """
-    4.2 Test implementation:
-    Tests calculate_shipping_cost() with physical products of different weights,
-    and verifies interface adherence.
-    """
-    print("==================================================")
-    print("--- 4.2 Testing CanBeShipped Interface ---")
-    print("==================================================")
-
-    light_item = PhysicalProduct("P010", "Computer Mouse", 20.00, 50, weight=0.2)
-    medium_item = PhysicalProduct("P011", "Mechanical Keyboard", 80.00, 30, weight=1.2)
-    heavy_item = PhysicalProduct("P012", "Desktop Tower", 1200.00, 10, weight=14.5)
-    digital_item = DigitalProduct("D010", "Video Editor", 99.99, 100, download_size=1500.0)
-
-    shippable_items = [light_item, medium_item, heavy_item]
-
-    for item in shippable_items:
-        print(f"\nItem: {item.name} (Weight: {item.weight} kg)")
-        print(f"Is CanBeShipped Instance? {isinstance(item, CanBeShipped)}")
-        print(f"Calculated Shipping Cost: ${item.calculate_shipping_cost():.2f}")
-
-    print(f"\nDigital Item: {digital_item.name}")
-    print(f"Is CanBeShipped Instance? {isinstance(digital_item, CanBeShipped)}")
-
-    print("--------------------------------------------------\n")
+from product import PhysicalProduct, DigitalProduct
 
 
 def get_user_option() -> str:
@@ -40,9 +12,6 @@ def get_user_option() -> str:
 
 
 def main():
-    # Run interface test suite first
-    test_can_be_shipped_interface()
-
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")
     print("==================================================\n")
@@ -67,7 +36,15 @@ def main():
 
         elif option == "2":
             print("\nAdd New Product")
-            p_type = input("Product Type (1: Physical, 2: Digital): ").strip()
+            print("1. Physical Product")
+            print("2. Digital Product")
+            p_type = input("Select Product Type (1 or 2): ").strip()
+
+            if p_type not in ["1", "2"]:
+                print("Invalid choice! Please select 1 for Physical or 2 for Digital.")
+                print()
+                continue
+
             p_id = input("Product ID: ").strip()
             name = input("Product Name: ").strip()
             try:
@@ -77,16 +54,13 @@ def main():
                 if p_type == "1":
                     weight = float(input("Weight (kg): "))
                     new_item = PhysicalProduct(p_id, name, price, stock, weight)
-                elif p_type == "2":
-                    size = float(input("Download Size (MB): "))
-                    new_item = DigitalProduct(p_id, name, price, stock, size)
                 else:
-                    print("Invalid product type chosen.")
-                    continue
+                    download_size = float(input("Download Size (MB): "))
+                    new_item = DigitalProduct(p_id, name, price, stock, download_size)
 
                 inventory.add_product(new_item)
             except ValueError:
-                print("Invalid numerical input.")
+                print("Invalid numerical input. Product addition canceled.")
 
         elif option == "3":
             print("\nUpdate Stock")
