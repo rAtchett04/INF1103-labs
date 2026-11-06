@@ -1,10 +1,19 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class Product(ABC):
     def __init__(self, product_id: str, name: str, price: float, stock: int, history: list = None):
         self.id = product_id
         self.name = name
         self.price = float(price)
         self.stock = int(stock)
         self.history = history if history is not None else [self.stock]
+
+    # --- Abstract Method Declaration ---
+    @abstractmethod
+    def get_fulfilment_info(self) -> str:
+        """Abstract method returning fulfilment information. Must be implemented by subclasses."""
+        pass
 
     def update_stock(self, new_stock: int):
         """Updates stock quantity and records the transaction delta in history."""
@@ -24,7 +33,7 @@ class Product:
 
     @classmethod
     def from_dict(cls, data: dict):
-        """Creates a Product object from a dictionary based on its specific attributes."""
+        """Creates a Product instance from a dictionary based on its specific attributes."""
         if "weight" in data:
             return PhysicalProduct(
                 product_id=data["id"],
@@ -43,11 +52,13 @@ class Product:
                 download_size=data["download_size"],
                 history=data.get("history", [data["stock"]])
             )
-        return cls(
+        
+        return PhysicalProduct(
             product_id=data["id"],
             name=data["name"],
             price=data["price"],
             stock=data["stock"],
+            weight=0.0,
             history=data.get("history", [data["stock"]])
         )
 
@@ -62,13 +73,12 @@ class Product:
         print(f"Price: ${self.price:.2f}")
         print(f"Stock: {self.stock}")
 
-    # Base display_information method to be reused by subclasses
     def display_information(self):
         """Displays common product information."""
         self.display_details()
 
 
-# --- PhysicalProduct Class ---
+# --- PhysicalProduct Implementation ---
 
 class PhysicalProduct(Product):
     """
@@ -78,11 +88,16 @@ class PhysicalProduct(Product):
         super().__init__(product_id, name, price, stock, history)
         self.weight = float(weight)
 
-    #Reuse parent implementation using super()
+    # Implement get_fulfilment_info() for physical shipping
+    def get_fulfilment_info(self) -> str:
+        """Returns a message explaining physical shipping requirements."""
+        return f"Physical shipping required. Item weight: {self.weight:.2f} kg."
+
     def display_information(self):
-        """Calls super().display_information() then displays the additional weight."""
+        """Calls super().display_information() then displays weight and fulfilment info."""
         super().display_information()
         print(f"Weight: {self.weight:.2f} kg")
+        print(f"Fulfilment Info: {self.get_fulfilment_info()}")
 
     def display_row(self):
         """Overrides display_row to include weight information in list views."""
@@ -95,7 +110,7 @@ class PhysicalProduct(Product):
         return data
 
 
-# --- DigitalProduct Class ---
+# --- DigitalProduct Implementation ---
 
 class DigitalProduct(Product):
     """
@@ -105,11 +120,16 @@ class DigitalProduct(Product):
         super().__init__(product_id, name, price, stock, history)
         self.download_size = float(download_size)
 
-    # Reuse parent implementation using super()
+    # Implement get_fulfilment_info() for digital delivery
+    def get_fulfilment_info(self) -> str:
+        """Returns a message explaining digital delivery."""
+        return f"Delivered digitally via email/download link. Size: {self.download_size:.2f} MB."
+
     def display_information(self):
-        """Calls super().display_information() then displays the additional download size."""
+        """Calls super().display_information() then displays download size and fulfilment info."""
         super().display_information()
         print(f"Download Size: {self.download_size:.2f} MB")
+        print(f"Fulfilment Info: {self.get_fulfilment_info()}")
 
     def display_row(self):
         """Overrides display_row to include download size in list views."""

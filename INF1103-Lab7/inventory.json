@@ -6,44 +6,27 @@
         "stock": 15,
         "history": [
             15
-        ]
+        ],
+        "weight": 2.5
     },
     {
         "id": "P002",
         "name": "Mouse",
         "price": 25.5,
-        "stock": 10,
+        "stock": 40,
         "history": [
-            40,
-            -9164,
-            9134
-        ]
+            40
+        ],
+        "weight": 0.1
     },
     {
-        "id": "P003",
-        "name": "Keyboard",
-        "price": 45.0,
-        "stock": 25,
+        "id": "D001",
+        "name": "E-Book Guide",
+        "price": 15.0,
+        "stock": 100,
         "history": [
-            25
-        ]
-    },
-    {
-        "id": "P004",
-        "name": "Monitor",
-        "price": 299.9,
-        "stock": 10,
-        "history": [
-            10
-        ]
-    },
-    {
-        "id": "P005",
-        "name": "Thumbdrive",
-        "price": 20.0,
-        "stock": 5,
-        "history": [
-            5
-        ]
+            100
+        ],
+        "download_size": 12.5
     }
 ]

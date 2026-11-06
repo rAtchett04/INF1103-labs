@@ -1,28 +1,25 @@
-# inventory_manager.py
 from inventory import Inventory
-from product import Product, PhysicalProduct, DigitalProduct
+from product import PhysicalProduct, DigitalProduct
 
 
-def test_display_information_overriding():
+def test_fulfilment_info():
     """
-    2.2 Test implementation:
-    Creates one physical product and one digital product, calling display_information()
-    on each object to verify that both common product information and type-specific details are shown.
+    3.2 Test implementation:
+    Tests get_fulfilment_info() for both PhysicalProduct and DigitalProduct implementations.
     """
     print("==================================================")
-    print("--- 2.2 Testing display_information() Overriding ---")
+    print("--- 3.2 Testing get_fulfilment_info() ---")
     print("==================================================")
-    
-    # Create one physical product
-    phys_product = PhysicalProduct("P099", "Gaming Laptop", 1500.00, 5, weight=3.2)
-    print("\n--- Physical Product Information ---")
-    phys_product.display_information()
 
-    # Create one digital product
-    digi_product = DigitalProduct("D099", "Photo Editing Software", 89.99, 100, download_size=450.5)
-    print("\n--- Digital Product Information ---")
-    digi_product.display_information()
-    
+    phys_item = PhysicalProduct("P099", "Gaming Laptop", 1500.00, 5, weight=3.2)
+    digi_item = DigitalProduct("D099", "Antivirus Software", 49.99, 100, download_size=250.0)
+
+    print(f"\n[Physical Product] {phys_item.name}:")
+    print(f"Fulfilment Output: {phys_item.get_fulfilment_info()}")
+
+    print(f"\n[Digital Product] {digi_item.name}:")
+    print(f"Fulfilment Output: {digi_item.get_fulfilment_info()}")
+
     print("--------------------------------------------------\n")
 
 
@@ -36,7 +33,8 @@ def get_user_option() -> str:
 
 
 def main():
-    test_display_information_overriding()
+    # 3.2 Run test suite first
+    test_fulfilment_info()
 
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")
@@ -62,13 +60,13 @@ def main():
 
         elif option == "2":
             print("\nAdd New Product")
-            p_type = input("Product Type (1: Physical, 2: Digital, 3: Standard): ").strip()
+            p_type = input("Product Type (1: Physical, 2: Digital): ").strip()
             p_id = input("Product ID: ").strip()
             name = input("Product Name: ").strip()
             try:
                 price = float(input("Price: "))
                 stock = int(input("Stock Quantity: "))
-                
+
                 if p_type == "1":
                     weight = float(input("Weight (kg): "))
                     new_item = PhysicalProduct(p_id, name, price, stock, weight)
@@ -76,8 +74,9 @@ def main():
                     size = float(input("Download Size (MB): "))
                     new_item = DigitalProduct(p_id, name, price, stock, size)
                 else:
-                    new_item = Product(p_id, name, price, stock)
-                    
+                    print("Invalid product type chosen.")
+                    continue
+
                 inventory.add_product(new_item)
             except ValueError:
                 print("Invalid numerical input.")
