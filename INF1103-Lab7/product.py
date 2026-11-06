@@ -24,8 +24,7 @@ class Product:
 
     @classmethod
     def from_dict(cls, data: dict):
-        """Creates a Product object from a dictionary."""
-        # Handles instantiation of PhysicalProduct if weight is present in dictionary
+        """Creates a Product object from a dictionary based on its specific attributes."""
         if "weight" in data:
             return PhysicalProduct(
                 product_id=data["id"],
@@ -33,6 +32,15 @@ class Product:
                 price=data["price"],
                 stock=data["stock"],
                 weight=data["weight"],
+                history=data.get("history", [data["stock"]])
+            )
+        elif "download_size" in data:
+            return DigitalProduct(
+                product_id=data["id"],
+                name=data["name"],
+                price=data["price"],
+                stock=data["stock"],
+                download_size=data["download_size"],
                 history=data.get("history", [data["stock"]])
             )
         return cls(
@@ -62,12 +70,9 @@ class PhysicalProduct(Product):
     Inherits from Product and introduces a weight attribute in kilograms.
     """
     def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float, history: list = None):
-        # 6. Reuse existing Product constructor using super()
         super().__init__(product_id, name, price, stock, history)
-        # 7. Initialize additional weight attribute (in kg)
         self.weight = float(weight)
 
-    # 8. Method to display product information alongside weight
     def display_information(self):
         """Displays product information alongside its weight."""
         self.display_details()
@@ -81,4 +86,33 @@ class PhysicalProduct(Product):
         """Overrides to_dict to include the weight attribute in JSON persistence."""
         data = super().to_dict()
         data["weight"] = self.weight
+        return data
+
+
+# --- DigitalProduct Class ---
+
+class DigitalProduct(Product):
+    """
+    Inherits from Product and introduces a download_size attribute in megabytes (MB).
+    """
+    def __init__(self, product_id: str, name: str, price: float, stock: int, download_size: float, history: list = None):
+        # 9. Reuse the existing Product constructor using super()
+        super().__init__(product_id, name, price, stock, history)
+        # 10. Initialize the additional download_size attribute
+        self.download_size = float(download_size)
+
+    # 11. Provide its own display_information() method displaying details alongside download size
+    def display_information(self):
+        """Displays product information alongside its download size in MB."""
+        self.display_details()
+        print(f"Download Size: {self.download_size:.2f} MB")
+
+    def display_row(self):
+        """Overrides display_row to include download size in list views."""
+        print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Size: {self.download_size:.2f} MB")
+
+    def to_dict(self) -> dict:
+        """Overrides to_dict to include the download_size attribute in JSON persistence."""
+        data = super().to_dict()
+        data["download_size"] = self.download_size
         return data
