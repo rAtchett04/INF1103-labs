@@ -19,7 +19,7 @@ class Supplier:
 
     @classmethod
     def from_dict(cls, data: dict | None) -> "Supplier":
-        # Creates a Supplier instance from a dictionary.
+        # Creates a Supplier instance from a dictionary
         if not data:
             return cls("SUP000", "Main Supplier", "mainsupplier@example.com")
         return cls(

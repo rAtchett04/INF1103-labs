@@ -3,37 +3,38 @@ from product import Product, PhysicalProduct, DigitalProduct
 from supplier import Supplier
 
 
-# Test substitutability helper function
+# Standalone function testing polymorphism and LSP
 def show_product_details(product: Product) -> None:
-    # Accepts a Product object and uses behaviour that every Product supports
     product.display_information()
-    print(product.get_fulfilment_info())
+    print(f"Fulfilment Info: {product.get_fulfilment_info()}")
 
 
-def test_liskov_substitution() -> None:
-    # Test implementation verifying LSP
+def test_polymorphism() -> None:
+    # Test implementation verifying Polymorphism across different Product types.
     print("==================================================")
-    print("--- 6.2 Testing Liskov Substitution Principle (LSP) ---")
+    print("--- 7.2 & 7.3 Testing Polymorphism & LSP ---")
     print("==================================================")
 
-    sup: Supplier = Supplier("SUP500", "LSP Test Supplier", "lsp@test.com")
-    phys_item: PhysicalProduct = PhysicalProduct("P501", "Mechanical Keyboard", 120.00, 25, weight=1.1, supplier=sup)
-    digi_item: DigitalProduct = DigitalProduct("D501", "Cloud Antivirus", 39.99, 100, download_size=320.0, supplier=sup)
+    sup: Supplier = Supplier("SUP700", "Poly Tech", "support@polytech.com")
+    phys_item: PhysicalProduct = PhysicalProduct("P701", "Mechanical Keyboard", 120.00, 25, weight=1.1, supplier=sup)
+    digi_item: DigitalProduct = DigitalProduct("D701", "Cloud Antivirus", 39.99, 100, download_size=320.0, supplier=sup)
 
-    print("\n--- 1. Testing show_product_details() with PhysicalProduct ---")
+    # Test single show_product_details function
+    print("\n--- 1. Calling show_product_details() on PhysicalProduct ---")
     show_product_details(phys_item)
 
-    print("\n--- 2. Testing show_product_details() with DigitalProduct ---")
+    print("\n--- 2. Calling show_product_details() on DigitalProduct ---")
     show_product_details(digi_item)
 
-    # Test that both product types can be added to an Inventory and used by normal operations
-    test_inventory: Inventory = Inventory("lsp_test.json")
-    test_inventory.add_product(phys_item)
-    test_inventory.add_product(digi_item)
+    # Add both product types to a single Inventory collection
+    test_inv: Inventory = Inventory("poly_test.json")
+    test_inv.add_product(phys_item)
+    test_inv.add_product(digi_item)
 
-    print("\n--- 3. Testing Inventory.display_all_products() (LSP Polymorphism) ---")
-    test_inventory.display_all_products()
-    print("LSP Test passed successfully!")
+    # Call display_all_fulfilment_details()
+    print("\n--- 3. Executing Unified Polymorphic Loop on Inventory ---")
+    test_inv.display_all_fulfilment_details()
+    print("Polymorphism Test passed successfully!")
     print("--------------------------------------------------\n")
 
 
@@ -46,8 +47,8 @@ def get_user_option() -> str:
 
 
 def main() -> None:
-    # Run LSP Test
-    test_liskov_substitution()
+    # Run Polymorphism test 
+    test_polymorphism()
 
     print("==================================================")
     print("INVENTORY MANAGEMENT SYSTEM")

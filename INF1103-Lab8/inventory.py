@@ -45,13 +45,13 @@ class Inventory:
         except IOError as e:
             print(f"Error saving inventory: {e}")
 
-    # Work with the Product abstraction
-    def display_all_products(self) -> None:
-        # Asks each Product to display its information polymorphically
-        print("\nCurrent Inventory (LSP Abstraction View)")
+    def display_all_fulfilment_details(self) -> None:
+        # Single loop calling display_information() and get_fulfilment_info()
+        print("\nAll Product Fulfilment Details (Polymorphic Loop)")
         print("--------------------------------------------------")
         for product in self.products:
             product.display_information()
+            print(f"Fulfilment Info: {product.get_fulfilment_info()}")
             print("--------------------------------------------------")
 
     def add_product(self, product: Product) -> bool:
@@ -83,6 +83,7 @@ class Inventory:
         return None
 
     def find_by_id(self, product_id: str) -> Product | None:
+        # Helper alias pointing to find_product
         return self.find_product(product_id)
 
     def display_all(self) -> None:
@@ -100,6 +101,7 @@ class Inventory:
             print("\nProduct Found")
             print("--------------------------------------------------")
             product.display_information()
+            print(f"Fulfilment Info: {product.get_fulfilment_info()}")
             print("--------------------------------------------------")
             return True
 

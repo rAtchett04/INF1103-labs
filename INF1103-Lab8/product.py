@@ -90,7 +90,7 @@ class Product(ABC):
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Supplier: {sup_name}")
 
     def display_details(self) -> None:
-        # Prints a detailed view of the product
+        # Prints a detailed view of the product including supplier info
         print(f"ID: {self.id}")
         print(f"Name: {self.name}")
         print(f"Price: ${self.price:.2f}")
@@ -107,13 +107,13 @@ class Product(ABC):
 # --- PhysicalProduct Class ---
 
 class PhysicalProduct(Product, CanBeShipped):
-    # Physical product inheriting from Product and implementing CanBeShipped
+    # Physical product inheriting from Product and implementing CanBeShipped.
     def __init__(self, product_id: str, name: str, price: float, stock: int, weight: float, supplier: Supplier, history: list[int] | None = None) -> None:
         super().__init__(product_id, name, price, stock, supplier, history)
         self.weight: float = float(weight)
 
     def calculate_shipping_cost(self) -> float:
-        # Calculates shipping cost based on product weight
+        # Calculates shipping cost based on product weight.
         base_fee: float = 5.00
         rate_per_kg: float = 2.50
         return base_fee + (self.weight * rate_per_kg)
@@ -128,7 +128,6 @@ class PhysicalProduct(Product, CanBeShipped):
         super().display_information()
         print(f"Weight: {self.weight:.2f} kg")
         print(f"Shipping Cost: ${self.calculate_shipping_cost():.2f}")
-        print(f"Fulfilment Info: {self.get_fulfilment_info()}")
 
     def display_row(self) -> None:
         # Include weight information
@@ -159,7 +158,6 @@ class DigitalProduct(Product):
         # Displays parent details
         super().display_information()
         print(f"Download Size: {self.download_size:.2f} MB")
-        print(f"Fulfilment Info: {self.get_fulfilment_info()}")
 
     def display_row(self) -> None:
         # Include download size
