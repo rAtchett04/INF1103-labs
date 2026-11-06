@@ -1,11 +1,11 @@
 class Supplier:
-    # Represents a supplier for products.
-    def __init__(self, supplier_id: str, name: str, contact_email: str):
-        self.supplier_id = supplier_id
-        self.name = name
-        self.contact_email = contact_email
+    # Represents a supplier for products
+    def __init__(self, supplier_id: str, name: str, contact_email: str) -> None:
+        self.supplier_id: str = supplier_id
+        self.name: str = name
+        self.contact_email: str = contact_email
 
-    def display_information(self):
+    def display_information(self) -> None:
         # Displays supplier details
         print(f"Supplier ID: {self.supplier_id} | Name: {self.name} | Email: {self.contact_email}")
 
@@ -18,8 +18,8 @@ class Supplier:
         }
 
     @classmethod
-    def from_dict(cls, data: dict):
-        # Creates a Supplier instance from a dictionary
+    def from_dict(cls, data: dict | None) -> "Supplier":
+        # Creates a Supplier instance from a dictionary.
         if not data:
             return cls("SUP000", "Main Supplier", "mainsupplier@example.com")
         return cls(
