@@ -1,0 +1,8 @@
+Task 2 prediction:
+If I delete my supplier variable, the code should not be able to run as it is part of the object created and will have nothing to display if I call for it.
+
+Task 3 prediction:
+If I remove Product from Inventory A, my program should still be able to run normally. This is because missing items are accounted for can checked through the program and will still return lines for the user to see.
+
+Task 4 prediction:
+If I add the same Product to two different Orders, I predict that there will be 2 OrderLine objects and 2 Product objects.
