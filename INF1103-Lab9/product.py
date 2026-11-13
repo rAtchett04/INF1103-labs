@@ -22,7 +22,7 @@ class Product(ABC):
         self.stock = new_stock
 
     def to_dict(self) -> dict:
-        # Converts the Product object into a base dictionary for JSON serialization
+        # Converts the Product object into base dictionary
         return {
             "id": self.id,
             "name": self.name,
@@ -34,53 +34,35 @@ class Product(ABC):
 
     @classmethod
     def from_dict(cls, data: dict) -> "Product":
-        # Deferred local imports prevent circular dependency during module evaluation
-        from physicalproduct import PhysicalProduct
-        from digitalproduct import DigitalProduct
-
-        product_type: str = data.get("type", "").lower()
+        from productfactory import ProductFactory
 
         supplier_data: dict | None = data.get("supplier")
         supplier_obj: Supplier = Supplier.from_dict(supplier_data) if isinstance(supplier_data, dict) else Supplier("SUP001", "TechDistro Ltd", "sales@techdistro.com")
 
-        if product_type == "physical" or "weight" in data:
-            return PhysicalProduct(
-                product_id=data["id"],
-                name=data["name"],
-                price=data["price"],
-                stock=data["stock"],
-                weight=data.get("weight", 0.0),
-                supplier=supplier_obj,
-                history=data.get("history", [data["stock"]])
-            )
-        elif product_type == "digital" or "download_size" in data:
-            return DigitalProduct(
-                product_id=data["id"],
-                name=data["name"],
-                price=data["price"],
-                stock=data["stock"],
-                download_size=data.get("download_size", 0.0),
-                supplier=supplier_obj,
-                history=data.get("history", [data["stock"]])
-            )
-        
-        return PhysicalProduct(
+        # Determine product type
+        product_type: str = data.get("type", "").lower()
+        if not product_type:
+            product_type = "digital" if "download_size" in data else "physical"
+
+        return ProductFactory.create(
+            product_type=product_type,
             product_id=data["id"],
             name=data["name"],
             price=data["price"],
-            stock=data["stock"],
-            weight=0.0,
+            stock_quantity=data["stock"],
             supplier=supplier_obj,
+            weight=data.get("weight", 0.0),
+            download_size=data.get("download_size", 0.0),
             history=data.get("history", [data["stock"]])
         )
 
     def display_row(self) -> None:
-        # Prints a single-line summary of the product for list views
+        # Prints summary of product
         sup_name: str = self.supplier.name if self.supplier else "N/A"
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Supplier: {sup_name}")
 
     def display_details(self) -> None:
-        # Prints a detailed view of the product
+        # Prints detailed view of product
         print(f"ID: {self.id}")
         print(f"Name: {self.name}")
         print(f"Price: ${self.price:.2f}")

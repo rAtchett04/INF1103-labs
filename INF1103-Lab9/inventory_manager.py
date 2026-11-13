@@ -1,8 +1,6 @@
-# inventory_manager.py
 from inventory import Inventory
 from product import Product
-from physicalproduct import PhysicalProduct
-from digitalproduct import DigitalProduct
+from productfactory import ProductFactory
 from supplier import Supplier
 
 
@@ -68,14 +66,30 @@ def main() -> None:
                 new_item: Product
                 if p_type == "1":
                     weight: float = float(input("Weight (kg): "))
-                    new_item = PhysicalProduct(p_id, name, price, stock, weight, supplier=supplier_obj)
+                    new_item = ProductFactory.create(
+                        product_type="physical",
+                        product_id=p_id,
+                        name=name,
+                        price=price,
+                        stock_quantity=stock,
+                        supplier=supplier_obj,
+                        weight=weight
+                    )
                 else:
                     download_size: float = float(input("Download Size (MB): "))
-                    new_item = DigitalProduct(p_id, name, price, stock, download_size, supplier=supplier_obj)
+                    new_item = ProductFactory.create(
+                        product_type="digital",
+                        product_id=p_id,
+                        name=name,
+                        price=price,
+                        stock_quantity=stock,
+                        supplier=supplier_obj,
+                        download_size=download_size
+                    )
 
                 inventory.add_product(new_item)
-            except ValueError:
-                print("Invalid numerical input. Product addition canceled.")
+            except ValueError as e:
+                print(f"Invalid input ({e}). Product addition canceled.")
 
         elif option == "3":
             print("\nRemove Product")

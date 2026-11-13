@@ -1,9 +1,7 @@
-# inventory.py
 import json
 import os
 from product import Product
-from physicalproduct import PhysicalProduct
-from digitalproduct import DigitalProduct
+from productfactory import ProductFactory
 from supplier import Supplier
 
 
@@ -25,12 +23,12 @@ class Inventory:
             except (json.JSONDecodeError, IOError, KeyError):
                 print("Error loading inventory file. Starting fresh.\n")
 
-        default_supplier: Supplier = Supplier("SUP001", "Global Tech Wholesale", "contact@globaltech.com")
+        main_supplier: Supplier = Supplier("SUP001", "Global Tech Wholesale", "contact@globaltech.com")
 
         self.products = [
-            PhysicalProduct("P001", "Laptop", 1200.00, 15, weight=2.5, supplier=default_supplier),
-            PhysicalProduct("P002", "Mouse", 25.50, 40, weight=0.1, supplier=default_supplier),
-            DigitalProduct("D001", "E-Book Guide", 15.00, 100, download_size=12.5, supplier=default_supplier)
+            ProductFactory.create("physical", "P001", "Laptop", 1200.00, 15, supplier=main_supplier, weight=2.5),
+            ProductFactory.create("physical", "P002", "Mouse", 25.50, 40, supplier=main_supplier, weight=0.1),
+            ProductFactory.create("digital", "D001", "E-Book Guide", 15.00, 100, supplier=main_supplier, download_size=12.5)
         ]
 
     def save(self, silent: bool = False) -> None:
@@ -67,7 +65,7 @@ class Inventory:
         return True
 
     def remove_product(self, product_id: str) -> Product | None:
-        # Removes matching Product reference from inventory and returns it
+        # Removes matching Product reference from inventory
         product: Product | None = self.find_product(product_id)
         if product:
             self.products.remove(product)
@@ -88,7 +86,7 @@ class Inventory:
         return self.find_product(product_id)
 
     def display_all(self) -> None:
-        # Displays formatted list of all items
+        # Displays list of all items
         print("\nCurrent Inventory")
         print("--------------------------------------------------")
         for product in self.products:

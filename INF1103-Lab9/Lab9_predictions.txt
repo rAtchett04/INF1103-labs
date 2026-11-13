@@ -6,7 +6,10 @@ With BulkDiscount(200, 20), calculate_total() will return $230. For set_discount
 Relationship between Order and DiscountStrategy -> Association. 
 
 Task 3 prediction:
-If I remove Product from Inventory A, my program should still be able to run normally. This is because missing items are accounted for can checked through the program and will still return lines for the user to see.
+The 'else' branch inside ProductFactory.create() causes ValueError("Unknown product type: service"). If uncaught, the program terminates immediately. In inventory_manager.py, the 'try...except ValueError:' block catches it gracefully
+
+Before adding the factory, adding BundleProduct required updating 3 places -> 'product.py', 'inventory.py', and 'inventory_manager.py'. With the factory, only 1 place changes -> ProductFactory.create()
+The factory violates the Open/Closed Principle (OCP) because adding a new subclass means need to add a new elif branch into ProductFactory.create(), which is acceptable because the logic is isolated in a single dedicated factory class
 
 Task 4 prediction:
 If I add the same Product to two different Orders, I predict that there will be 2 OrderLine objects and 2 Product objects.
