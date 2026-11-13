@@ -1,5 +1,9 @@
 Task 2 prediction:
-If I delete my supplier variable, the code should not be able to run as it is part of the object created and will have nothing to display if I call for it.
+Without the Strategy pattern, I need to modify the Order class and the calculate_total() method in it.
+
+With BulkDiscount(200, 20), calculate_total() will return $230. For set_discount(PercentageDiscount(10)), it will return $225
+
+Relationship between Order and DiscountStrategy -> Association. 
 
 Task 3 prediction:
 If I remove Product from Inventory A, my program should still be able to run normally. This is because missing items are accounted for can checked through the program and will still return lines for the user to see.

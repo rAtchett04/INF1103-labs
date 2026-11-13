@@ -1,36 +1,26 @@
 # order.py
 from product import Product
-
-
-class OrderLine:
-    # Represents one line item within an order (product reference + quantity).
-    def __init__(self, product: Product, quantity: int) -> None:
-        self.product: Product = product
-        self.quantity: int = int(quantity)
-
-    def calculate_subtotal(self) -> float:
-        # Calculates and returns the product price multiplied by the ordered quantity.
-        return self.product.price * self.quantity
-
-    def display_line(self) -> None:
-        # Displays details of this specific order line.
-        subtotal: float = self.calculate_subtotal()
-        print(f"Product: {self.product.name:<20} | Qty: {self.quantity:<4} | Unit Price: ${self.product.price:<8.2f} | Subtotal: ${subtotal:.2f}")
+from order_line import OrderLine
+from discountstrategy import DiscountStrategy
 
 
 class Order:
-    # Manages an order composed of internally created OrderLine objects.
-    def __init__(self, order_id: str) -> None:
+    def __init__(self, order_id: str, discount: DiscountStrategy | None = None) -> None:
         self.order_id: str = order_id
         self.order_lines: list[OrderLine] = []
+        # Defaults to 'none' DiscountStrategy
+        self.discount: DiscountStrategy = discount if discount is not None else DiscountStrategy("none")
+
+    def set_discount(self, discount: DiscountStrategy) -> None:
+        self.discount = discount
 
     def add_order_line(self, product: Product, quantity: int) -> None:
-        # Creates an OrderLine object internally and adds it to the order collection.
+        # Creates an OrderLine object
         order_line: OrderLine = OrderLine(product, quantity)
         self.order_lines.append(order_line)
 
     def remove_order_line(self, product_id: str) -> bool:
-        # Removes an OrderLine from this order by matching product ID.
+        # Removes an OrderLine from this order by matching product ID
         for line in self.order_lines:
             if line.product.id.upper() == product_id.strip().upper():
                 self.order_lines.remove(line)
@@ -40,11 +30,12 @@ class Order:
         return False
 
     def calculate_total(self) -> float:
-        # Calculates and returns the total value of the order by asking each OrderLine for its subtotal.
-        return sum(line.calculate_subtotal() for line in self.order_lines)
+        # Adds up order line subtotals
+        total: float = sum(line.calculate_subtotal() for line in self.order_lines)
+        return self.discount.apply(total)
 
     def display_order_summary(self) -> None:
-        # Displays the entire order details and calculated total.
+        # Displays entire order details and total
         print(f"\nOrder Summary [ID: {self.order_id}]")
         print("--------------------------------------------------")
         if not self.order_lines:
