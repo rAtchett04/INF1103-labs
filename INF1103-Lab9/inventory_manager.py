@@ -1,7 +1,41 @@
+import csv
 from inventory import Inventory
 from product import Product
 from productfactory import ProductFactory
 from supplier import Supplier
+
+
+def load_products(path: str, inventory: Inventory, supplier: Supplier) -> None:
+    # Reads products from a CSV file using ProductFactory and adds them to Inventory
+    try:
+        file = open(path, newline="")
+    except FileNotFoundError:
+        print(f"Products file not found: {path}")
+    else:
+        loaded: int = 0
+        with file:
+            reader = csv.reader(file)
+            next(reader, None)  # Skip header row
+            for row in reader:
+                if not row:
+                    continue
+                try:
+                    product_type, product_id, name, price_str, stock_str = row
+                    product: Product = ProductFactory.create(
+                        product_type=product_type,
+                        product_id=product_id.strip(),
+                        name=name.strip(),
+                        price=float(price_str),
+                        stock_quantity=int(stock_str),
+                        supplier=supplier
+                    )
+                    if inventory.add_product(product):
+                        loaded += 1
+                except ValueError as e:
+                    print(f"Skipping invalid row {row}: {e}")
+        print(f"{loaded} products loaded.")
+    finally:
+        print("Load attempt finished.")
 
 
 def show_product_details(product: Product) -> None:
@@ -23,7 +57,11 @@ def main() -> None:
     print("==================================================\n")
 
     inventory: Inventory = Inventory()
-    inventory.load()
+    default_supplier: Supplier = Supplier("SUP001", "Global Tech Wholesale", "contact@globaltech.com")
+    
+    # Load initial products from CSV
+    load_products("products.csv", inventory, default_supplier)
+    print()
 
     while True:
         print("--------- MENU ---------")
@@ -45,51 +83,34 @@ def main() -> None:
             print("\nAdd New Product")
             print("1. Physical Product")
             print("2. Digital Product")
-            p_type: str = input("Select Product Type (1 or 2): ").strip()
-
-            if p_type not in ["1", "2"]:
-                print("Invalid choice! Please select 1 for Physical or 2 for Digital.")
-                print()
-                continue
+            while True:
+                p_type: str = input("Select Product Type (1 or 2): ").strip()
+                if p_type in ["1", "2"]:
+                    break
+                print("Invalid choice! Please enter 1 or 2.")
 
             p_id: str = input("Product ID: ").strip()
             name: str = input("Product Name: ").strip()
-            try:
-                price: float = float(input("Price: "))
-                stock: int = int(input("Stock Quantity: "))
+            while True:
+                try:
+                    price: float = float(input("Price: "))
+                    stock: int = int(input("Stock Quantity: "))
+                    sup_id: str = input("Supplier ID: ").strip()
+                    sup_name: str = input("Supplier Name: ").strip()
+                    sup_email: str = input("Supplier Contact Email: ").strip()
+                    supplier_obj: Supplier = Supplier(sup_id, sup_name, sup_email)
 
-                sup_id: str = input("Supplier ID: ").strip()
-                sup_name: str = input("Supplier Name: ").strip()
-                sup_email: str = input("Supplier Contact Email: ").strip()
-                supplier_obj: Supplier = Supplier(sup_id, sup_name, sup_email)
+                    if p_type == "1":
+                        weight: float = float(input("Weight (kg): "))
+                        new_item = ProductFactory.create("physical", p_id, name, price, stock, supplier=supplier_obj, weight=weight)
+                    else:
+                        download_size: float = float(input("Download Size (MB): "))
+                        new_item = ProductFactory.create("digital", p_id, name, price, stock, supplier=supplier_obj, download_size=download_size)
 
-                new_item: Product
-                if p_type == "1":
-                    weight: float = float(input("Weight (kg): "))
-                    new_item = ProductFactory.create(
-                        product_type="physical",
-                        product_id=p_id,
-                        name=name,
-                        price=price,
-                        stock_quantity=stock,
-                        supplier=supplier_obj,
-                        weight=weight
-                    )
-                else:
-                    download_size: float = float(input("Download Size (MB): "))
-                    new_item = ProductFactory.create(
-                        product_type="digital",
-                        product_id=p_id,
-                        name=name,
-                        price=price,
-                        stock_quantity=stock,
-                        supplier=supplier_obj,
-                        download_size=download_size
-                    )
-
-                inventory.add_product(new_item)
-            except ValueError as e:
-                print(f"Invalid input ({e}). Product addition canceled.")
+                    inventory.add_product(new_item)
+                    break
+                except ValueError as e:
+                    print(f"Invalid input ({e}). Please try again.")
 
         elif option == "3":
             print("\nRemove Product")
@@ -110,8 +131,8 @@ def main() -> None:
                     print("\nStock updated successfully!")
                 else:
                     print("Product not found.")
-            except ValueError:
-                print("Invalid quantity entered.")
+            except ValueError as e:
+                print(f"Invalid quantity entered: {e}")
 
         elif option == "5":
             print("\nSearch Product")

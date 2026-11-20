@@ -1,10 +1,15 @@
 from product import Product
 
+
 class OrderLine:
     # Represents one line item
     def __init__(self, product: Product, quantity: int) -> None:
+        qty_val: int = int(quantity)
+        if qty_val <= 0:
+            raise ValueError("Quantity must be greater than zero.")
+
         self.product: Product = product
-        self.quantity: int = int(quantity)
+        self.quantity: int = qty_val
 
     def calculate_subtotal(self) -> float:
         # Calculates total price

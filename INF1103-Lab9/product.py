@@ -4,10 +4,18 @@ from supplier import Supplier
 
 class Product(ABC):
     def __init__(self, product_id: str, name: str, price: float, stock: int, supplier: Supplier, history: list[int] | None = None) -> None:
+        price_val: float = float(price)
+        stock_val: int = int(stock)
+
+        if price_val <= 0:
+            raise ValueError("Product price must be greater than zero.")
+        if stock_val < 0:
+            raise ValueError("Product stock quantity cannot be negative.")
+
         self.id: str = product_id
         self.name: str = name
-        self.price: float = float(price)
-        self.stock: int = int(stock)
+        self.price: float = price_val
+        self.stock: int = stock_val
         self.supplier: Supplier = supplier
         self.history: list[int] = history if history is not None else [self.stock]
 
@@ -16,13 +24,17 @@ class Product(ABC):
         pass
 
     def update_stock(self, new_stock: int) -> None:
-        # Updates stock quantity and records transactions
-        diff: int = new_stock - self.stock
+        # Validates non-negative stock before updating and recording history
+        new_stock_val: int = int(new_stock)
+        if new_stock_val < 0:
+            raise ValueError("Product stock quantity cannot be negative.")
+
+        diff: int = new_stock_val - self.stock
         self.history.append(diff)
-        self.stock = new_stock
+        self.stock = new_stock_val
 
     def to_dict(self) -> dict:
-        # Converts the Product object into base dictionary
+        # Converts the Product object into a base dictionary for JSON serialization
         return {
             "id": self.id,
             "name": self.name,
@@ -34,12 +46,12 @@ class Product(ABC):
 
     @classmethod
     def from_dict(cls, data: dict) -> "Product":
+        # Local import prevents circular dependency with productfactory.py
         from productfactory import ProductFactory
 
         supplier_data: dict | None = data.get("supplier")
         supplier_obj: Supplier = Supplier.from_dict(supplier_data) if isinstance(supplier_data, dict) else Supplier("SUP001", "TechDistro Ltd", "sales@techdistro.com")
 
-        # Determine product type
         product_type: str = data.get("type", "").lower()
         if not product_type:
             product_type = "digital" if "download_size" in data else "physical"
@@ -57,12 +69,12 @@ class Product(ABC):
         )
 
     def display_row(self) -> None:
-        # Prints summary of product
+        # Prints a single-line summary of the product for list views
         sup_name: str = self.supplier.name if self.supplier else "N/A"
         print(f"ID: {self.id} | Name: {self.name} | Price: ${self.price:.2f} | Stock: {self.stock} | Supplier: {sup_name}")
 
     def display_details(self) -> None:
-        # Prints detailed view of product
+        # Prints a detailed view of the product
         print(f"ID: {self.id}")
         print(f"Name: {self.name}")
         print(f"Price: ${self.price:.2f}")

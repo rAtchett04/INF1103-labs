@@ -12,4 +12,16 @@ Before adding the factory, adding BundleProduct required updating 3 places -> 'p
 The factory violates the Open/Closed Principle (OCP) because adding a new subclass means need to add a new elif branch into ProductFactory.create(), which is acceptable because the logic is isolated in a single dedicated factory class
 
 Task 4 prediction:
-If I add the same Product to two different Orders, I predict that there will be 2 OrderLine objects and 2 Product objects.
+DigitalProduct should not skip that rule because it would break LSP by breaking the parent class's invariant. Callers relying on Product expect stock to never be negative.
+
+Task 5 prediction:
+With products.csv present, 3 products will load:
+1. Success messages for P001 and D001
+2. An error message skipping S001 (Unknown product type: service)
+3. An error message skipping P002 (invalid price abc)
+4. Success message for P003
+5. "3 products loaded."
+6. "Load attempt finished."
+
+After renaming products.csv, only 'except (printing "Products file not found: ...")' and
+'finally (printing "Load attempt finished.")' will run. The 'else' block is skipped.

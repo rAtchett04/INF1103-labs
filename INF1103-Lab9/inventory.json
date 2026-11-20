@@ -1,99 +1,50 @@
 [
     {
         "id": "P001",
-        "name": "Laptop",
-        "price": 1200.0,
-        "stock": 15,
+        "name": "Desk Lamp",
+        "price": 25.0,
+        "stock": 10,
         "supplier": {
             "supplier_id": "SUP001",
-            "name": "TechDistro Ltd",
-            "contact_email": "sales@techdistro.com"
+            "name": "Global Tech Wholesale",
+            "contact_email": "contact@globaltech.com"
         },
         "history": [
-            15
+            10
         ],
         "type": "physical",
-        "weight": 2.5
-    },
-    {
-        "id": "P002",
-        "name": "Mouse",
-        "price": 25.5,
-        "stock": 40,
-        "supplier": {
-            "supplier_id": "SUP001",
-            "name": "TechDistro Ltd",
-            "contact_email": "sales@techdistro.com"
-        },
-        "history": [
-            40
-        ],
-        "type": "physical",
-        "weight": 0.1
+        "weight": 0.0
     },
     {
         "id": "D001",
-        "name": "E-Book Guide",
-        "price": 15.0,
+        "name": "Photo Editor",
+        "price": 49.9,
         "stock": 100,
         "supplier": {
             "supplier_id": "SUP001",
-            "name": "TechDistro Ltd",
-            "contact_email": "sales@techdistro.com"
+            "name": "Global Tech Wholesale",
+            "contact_email": "contact@globaltech.com"
         },
         "history": [
             100
         ],
         "type": "digital",
-        "download_size": 12.5
+        "download_size": 0.0
     },
     {
         "id": "P003",
-        "name": "Monitor",
-        "price": 100.0,
-        "stock": 10,
+        "name": "Monitor Stand",
+        "price": 39.5,
+        "stock": 7,
         "supplier": {
             "supplier_id": "SUP001",
-            "name": "TechDistro Ltd",
-            "contact_email": "sales@techdistro.com"
+            "name": "Global Tech Wholesale",
+            "contact_email": "contact@globaltech.com"
         },
         "history": [
-            10
+            7
         ],
         "type": "physical",
-        "weight": 4.5
-    },
-    {
-        "id": "Dknek",
-        "name": "LOL",
-        "price": 1.0,
-        "stock": 1,
-        "supplier": {
-            "supplier_id": "SUP001",
-            "name": "TechDistro Ltd",
-            "contact_email": "sales@techdistro.com"
-        },
-        "history": [
-            1,
-            0
-        ],
-        "type": "digital",
-        "download_size": 1.0
-    },
-    {
-        "id": "D002",
-        "name": "Software Program",
-        "price": 100.0,
-        "stock": 10,
-        "supplier": {
-            "supplier_id": "SUP001",
-            "name": "TechDistro Ltd",
-            "contact_email": "sales@techdistro.com"
-        },
-        "history": [
-            10
-        ],
-        "type": "digital",
-        "download_size": 100.0
+        "weight": 0.0
     }
 ]
